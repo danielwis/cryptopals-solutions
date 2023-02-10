@@ -28,16 +28,16 @@ fn freq_english_chars(input: &[u8]) -> f64 {
 }
 
 fn find_key_one_byte(input: &[u8]) -> (u8, Vec<u8>) {
-    let mut max_freq: f64 = 0.0;
+    let mut max_score: f64 = 0.0;
     let mut most_probable_key: u8 = 0x0;
     let mut ans = vec![0u8; input.len()];
 
     for i in 0..128 {
         let v = vec![i;input.len()];
         let xor_with_i = challenge2::xor_slices(&v, input);
-        let freq = freq_english_chars(&xor_with_i);
-        if freq > max_freq {
-            max_freq = freq;
+        let score = freq_english_chars(&xor_with_i);
+        if score > max_score {
+            max_score = score;
             most_probable_key = i;
             ans = xor_with_i;
         }
