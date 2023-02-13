@@ -11,11 +11,15 @@ fn main() {
     let output_expected = [0x74,0x68,0x65,0x20,0x6b,0x69,0x64,0x20,0x64,0x6f,0x6e,0x27,0x74,0x20,0x70,0x6c,0x61,0x79];
     assert_eq!(set1::challenge2::xor_slices(&input1, &input2), output_expected.to_vec());
 
+    // Challenge 3
     let input = [0x1b,0x37,0x37,0x33,0x31,0x36,0x3f,0x78,0x15,0x1b,0x7f,0x2b,0x78,0x34,0x31,0x33,0x3d,0x78,0x39,0x78,0x28,0x37,0x2d,0x36,0x3c,0x78,0x37,0x3e,0x78,0x3a,0x39,0x3b,0x37,0x36];
-    println!("Challenge 3 decrypted text: {}",String::from_utf8(set1::challenge3::decrypt_single_byte_xor_cipher(&input)).unwrap());
+    let (ans, _) =  set1::challenge3::decrypt_single_byte_xor_cipher(&input);
+    let ans = String::from_utf8(ans).unwrap();
+    assert_eq!(ans, "Cooking MC's like a pound of bacon".to_owned());
 
     let input_filename = "inputs/s1c4.input";
-    set1::challenge4::find_single_char_xor_ciphertext(&input_filename);
+    let ans = set1::challenge4::find_single_char_xor_ciphertext(&input_filename);
+    assert_eq!(ans, "Now that the party is jumping\n".to_owned());
 
     println!("All trials passed!");
 }

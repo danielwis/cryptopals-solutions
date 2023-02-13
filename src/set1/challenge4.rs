@@ -48,15 +48,20 @@ fn read_input_file_as_bytes(filename: &str) -> Vec<Vec<u8>> {
     bytestrings
 }
 
-pub fn find_single_char_xor_ciphertext(filename: &str) -> Vec<u8> {
-    let input_strings = read_input_file_as_bytes(filename);
-    let decrypted = Vec::<u8>::new();
+/// Find the single-char XOR:ed ciphertext amongst a bunch of other potential ciphertexts
+pub fn find_single_char_xor_ciphertext(filename: &str) -> String {
+    let input_bytes = read_input_file_as_bytes(filename);
+    let mut most_probably_english = vec![0u8; 60];
+    let mut max_rating = 0.0;
 
-    for input_string in input_strings {
-        dbg!(&input_string);
-        let letter_frequencies: HashMap<String, f64> = set1::helpers::n_grams(1, &input_string);
-        dbg!(letter_frequencies);
+    for input_string in input_bytes {
+        let (decrypted, rating) = set1::challenge3::decrypt_single_byte_xor_cipher(&input_string);
+
+        if rating > max_rating {
+            most_probably_english = decrypted;
+            max_rating = rating;
+        }
     }
 
-    decrypted
+    String::from_utf8(most_probably_english).unwrap()
 }
