@@ -38,6 +38,7 @@ fn push_as_b64(output: &mut String, chunk: &[u8]) {
         output.push(BASE_64_TABLE[idx]);
     }
 
+    // Deal with any non-filled (but remaining) positions
     for _ in 0..4 - num_output_chars {
         output.push('=');
     }

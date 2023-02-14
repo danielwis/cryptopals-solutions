@@ -6,6 +6,13 @@ const ASCII_LOWERCASE_LOWER: u8 = 0x61;
 const ASCII_LOWERCASE_UPPER: u8 = 0x7A;
 const ASCII_SPACE: u8 = 0x20;
 
+const BASE_64_TABLE: [char; 64] = [
+    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
+    'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l',
+    'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4',
+    '5', '6', '7', '8', '9', '+', '/',
+];
+
 /// Get the relative frequencies of each character/bigram/trigram/n-gram
 /// Returns a hash map of type <String, f64> where the string is lowercase
 pub fn n_grams_bytes(n: usize, msg: &[u8]) -> HashMap<String, f64> {
@@ -104,4 +111,79 @@ pub fn rate_text(bytes: &[u8]) -> f64 {
     }
 
     rating
+}
+
+/*
+for byte in bytes {
+    let byte_b64_value =
+
+}
+*/
+
+// Take four 6-bit b64 values and squash them into a 24-bit value
+fn b64_chunk_to_bits(chunk: &[u8]) -> u32 {
+    let chunk_bits = 6;
+    let first_value_offset = 3 * chunk_bits; // 3*6, next offsets 2*6, 1*6 and 0*6
+    let mut chunk_as_bits: u32;
+    chunk_as_bits = (chunk[0] as u32) << first_value_offset;
+
+    // OR the bits into the u32. If the chunk is smaller than 4 sextets/bytes, the last
+    // bits will be left at zero
+    for i in 0..chunk.len() {
+        chunk_as_bits |= (chunk[i] as u32) << first_value_offset - (i * chunk_bits);
+    }
+
+    chunk_as_bits
+}
+
+// 1. Find position of sextet (encoded as 8-bit char)
+// 2. This is our first six bits
+// 3. Repeat for all four chars
+fn push_bytes(output_bytes: &mut Vec<u8>, chunk_to_push: &[u8]) {
+    let bits: u32 = b64_chunk_to_bits(chunk_to_push);
+    let mut bits_converted: u32 = 0;
+
+    // Build an u32 from the four sextets, to then be broken down into three bytes
+    for i in 0..4 {
+        // Get the current sextet char, i.e. what we're looking to convert back to six bits
+        let sextet_char = chunk_to_push[i];
+        // Find the index of this char
+        let character_position = BASE_64_TABLE
+            .iter()
+            .position(|&b| b == char::from_digit(sextet_char as u32, 2).unwrap())
+            .unwrap();
+        // This index represents the first six bits, so shift up and mask
+        let character_position = (character_position << 2) & 0x3f;
+        // Build the u32
+        bits_converted |= (character_position << (18 - i * 6)) as u32;
+    }
+
+    // Push each byte, starting with the one at idx 24-17 (or 23-16)
+    for i in 0..3 {
+        let byte = (bits_converted >> ((16 - i * 8) & 0xff)) as u8;
+        // Don't push null bytes (padding)
+        if byte != 0x0 {
+            output_bytes.push(byte);
+        }
+    }
+}
+
+// Input length should always be divisible by 4
+pub fn base64_to_hex(input: &str) -> Vec<u8> {
+    // Remove padding '=' characters
+    let input = input.trim_end_matches('=');
+
+    let bytes = input.as_bytes();
+    let chunks = bytes.chunks_exact(4);
+    let remaining_bytes = bytes.len() % 4;
+    let mut remaining_chunk = &bytes[bytes.len() - remaining_bytes..];
+    let mut output = Vec::<u8>::new();
+
+    for chunk in chunks {
+        push_bytes(&mut output, chunk);
+    }
+
+    push_bytes(&mut output, remaining_chunk);
+
+    output
 }
