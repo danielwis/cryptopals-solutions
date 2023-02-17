@@ -1,9 +1,7 @@
-use crate::set1;
-
-pub fn repeating_key_xor(input: &str, key: &str) -> Vec<u8> {
+pub fn repeating_key_xor(input: &[u8], key: &[u8]) -> Vec<u8> {
     input
-        .bytes()
-        .zip(key.bytes().cycle())
+        .iter()
+        .zip(key.iter().cycle())
         .map(|(i, k)| i ^ k)
         .collect()
 }

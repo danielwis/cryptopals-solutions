@@ -4,7 +4,7 @@ use std::vec;
 fn find_key_one_byte(input: &[u8]) -> (u8, Vec<u8>, f64) {
     let mut max_score: f64 = 0.0;
     let mut most_probable_key: u8 = 0x0;
-    let mut ans = vec![0u8; input.len()];
+    let mut ans = input.clone().to_vec();
 
     // Try XORing with all bytes
     for i in 0..=255 {
@@ -22,7 +22,7 @@ fn find_key_one_byte(input: &[u8]) -> (u8, Vec<u8>, f64) {
     return (most_probable_key, ans, max_score);
 }
 
-pub fn decrypt_single_byte_xor_cipher(input: &[u8]) -> (Vec<u8>, f64) {
-    let (_, ans, rating) = find_key_one_byte(input);
-    return (ans, rating);
+pub fn decrypt_single_byte_xor_cipher(input: &[u8]) -> (u8, Vec<u8>, f64) {
+    let (key, ans, rating) = find_key_one_byte(input);
+    return (key, ans, rating);
 }
