@@ -96,5 +96,11 @@ fn main() {
         ]
     );
 
+    // Challenge 7
+    println!("Running challenge 7");
+    let decrypted = set1::challenge7::decrypt_with_known_key("inputs/s1c7_nonb64.input", "YELLOW SUBMARINE".as_bytes());
+    let decrypted_str = String::from_utf8(decrypted).unwrap();
+    assert!(decrypted_str.contains("Supercalafragilisticexpialidocious"));
+
     println!("All trials passed!");
 }
