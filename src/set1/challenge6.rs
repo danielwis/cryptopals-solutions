@@ -1,7 +1,4 @@
-use std::{
-    fs::File,
-    io::Read
-};
+use std::{fs::File, io::Read};
 
 use crate::set1;
 

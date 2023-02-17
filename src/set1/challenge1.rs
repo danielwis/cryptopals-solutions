@@ -9,7 +9,7 @@ fn chunk_to_bits(chunk: &[u8]) -> u32 {
     let mut chunk_as_bits: u32;
     chunk_as_bits = (chunk[0] as u32) << 16;
     for i in 0..chunk.len() {
-        chunk_as_bits |= (chunk[i] as u32) << 16-(i*8);
+        chunk_as_bits |= (chunk[i] as u32) << 16 - (i * 8);
     }
 
     chunk_as_bits

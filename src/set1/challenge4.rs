@@ -54,7 +54,8 @@ pub fn find_single_char_xor_ciphertext(filename: &str) -> String {
     let mut max_rating = 0.0;
 
     for input_string in input_bytes {
-        let (_, decrypted, rating) = set1::challenge3::decrypt_single_byte_xor_cipher(&input_string);
+        let (_, decrypted, rating) =
+            set1::challenge3::decrypt_single_byte_xor_cipher(&input_string);
 
         if rating > max_rating {
             most_probably_english = decrypted;
