@@ -1,6 +1,7 @@
 mod set1;
+mod set2;
 
-fn main() {
+fn run_set_one() {
     // Challenge 1
     println!("Running challenge 1");
     let input_first = [
@@ -63,6 +64,7 @@ fn main() {
     ];
     assert_eq!(ans, output_expected);
 
+    // Challenge 6 pre-tests
     // Hamming distance
     println!("Running partial tests for challenge 6");
     assert_eq!(
@@ -73,19 +75,13 @@ fn main() {
         37
     );
 
-    // Break into chunks
+    // Break into n chunks
     assert_eq!(
         set1::challenge6::group_by_key_char(3, &[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
         vec![vec![1, 4, 7, 10], vec![2, 5, 8], vec![3, 6, 9]]
     );
 
-    // Test Vigenère solver on old input
-    /*
-    let input = [0x0b,0x36,0x37,0x27,0x2a,0x2b,0x2e,0x63,0x62,0x2c,0x2e,0x69,0x69,0x2a,0x23,0x69,0x3a,0x2a,0x3c,0x63,0x24,0x20,0x2d,0x62,0x3d,0x63,0x34,0x3c,0x2a,0x26,0x22,0x63,0x24,0x27,0x27,0x65,0x27,0x2a,0x28,0x2b,0x2f,0x20,0x43,0x0a,0x65,0x2e,0x2c,0x65,0x2a,0x31,0x24,0x33,0x3a,0x65,0x3e,0x2b,0x20,0x27,0x63,0x0c,0x69,0x2b,0x20,0x28,0x31,0x65,0x28,0x63,0x26,0x30,0x2e,0x27,0x28,0x2f];
-    assert_eq!(set1::challenge6::break_vigenere(&input), "ICE".as_bytes());
-    */
-
-    // Challenge 6
+    // Challenge 6 main challenge
     println!("Running challenge 6");
     let key: Vec<u8> = set1::challenge6::solve_challenge_6("inputs/s1c6_nonb64.input");
     assert_eq!(
@@ -118,4 +114,20 @@ fn main() {
     assert!(ecb_strings_found == 1);
 
     println!("All trials passed!");
+}
+
+fn run_set_two() {
+    // Challenge 9
+    let padded_output = set2::challenge9::pad_with_pkcs7("YELLOW SUBMARINE".as_bytes(), 20);
+    let expected_output = "YELLOW SUBMARINE\x04\x04\x04\x04".as_bytes();
+    assert_eq!(padded_output, expected_output);
+}
+
+fn main() {
+    if false {
+        run_set_one();
+    }
+    if true {
+        run_set_two();
+    }
 }
