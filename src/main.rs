@@ -105,5 +105,17 @@ fn main() {
     let decrypted_str = String::from_utf8(decrypted).unwrap();
     assert!(decrypted_str.contains("Supercalafragilisticexpialidocious"));
 
+    // Challenge 8
+    println!("Running challenge 8");
+    let hexstrings = set1::helpers::read_input_file_as_bytes("inputs/s1c8.input");
+    let mut ecb_strings_found = 0;
+    for hexstr in hexstrings {
+        if set1::challenge8::is_ecb(&hexstr) {
+            //println!("Found it! At least one 16-byte block occurs twice in the following vector: {:?}", hexstr);
+            ecb_strings_found += 1;
+        }
+    }
+    assert!(ecb_strings_found == 1);
+
     println!("All trials passed!");
 }
