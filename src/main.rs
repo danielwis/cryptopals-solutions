@@ -94,8 +94,9 @@ fn run_set_one() {
 
     // Challenge 7
     println!("Running challenge 7");
+    let input_text = set1::challenge7::read_input_from_file("inputs/s1c7_nonb64.input");
     let decrypted = set1::challenge7::decrypt_with_known_key(
-        "inputs/s1c7_nonb64.input",
+        &input_text,
         "YELLOW SUBMARINE".as_bytes(),
     );
     let decrypted_str = String::from_utf8(decrypted).unwrap();
@@ -113,15 +114,46 @@ fn run_set_one() {
     }
     assert!(ecb_strings_found == 1);
 
-    println!("All trials passed!");
+    println!("All trials passed for set 1!");
 }
+
 
 fn run_set_two() {
     // Challenge 9
+    println!("Running challenge 9");
     let padded_output = set2::challenge9::pad_with_pkcs7("YELLOW SUBMARINE".as_bytes(), 20);
     let expected_output = "YELLOW SUBMARINE\x04\x04\x04\x04".as_bytes();
     assert_eq!(padded_output, expected_output);
+
+
+    // Challenge 10 pre-tests
+    println!("Running challenge 10 pre-tests");
+    // ECB encrypt
+    let text = "HELLO".as_bytes();
+    let key = "YELLOW SUBMARINE".as_bytes();
+    let enc_text = set2::challenge10::encrypt_with_known_key(text, key);
+    let dec_enc_text = set1::challenge7::decrypt_with_known_key(&enc_text, key);
+    assert_eq!(enc_text, vec![0x81,0x15,0x2c,0xe9,0x4b,0x72,0x62,0x00,0xb7,0x27,0x91,0x43,0xe6,0xd8,0xf1,0xc5]);
+    assert_eq!(dec_enc_text, text);
+
+    // CBC encrypt/decrypt
+    let text = "ugpasgjf asdvafgjsfdih gaf fd gf dh gfdioghdfihg idfhuga8fgajds fuid sfdsiu fds fdg ifdsu fgd gifdgs fgdsai 1111".as_bytes();
+    let key = "YELLOW SUBMARINE".as_bytes();
+    let iv = vec![0u8; 16];
+    println!("Len text: {}" , text.len());
+    let enc_text = set2::challenge10::encrypt_cbc(text, key, &iv);
+    println!("Len enc text: {}" , enc_text.len());
+    let dec_enc_text = set2::challenge10::decrypt_cbc(&enc_text, key, &iv);
+    assert_eq!(dec_enc_text, text);
+
+
+    // Challenge 10
+    println!("Running challenge 10");
+    let input = set1::challenge7::read_input_from_file("inputs/s2c10.input");
+    let decrypted = set2::challenge10::decrypt_cbc(&input, "YELLOW SUBMARINE".as_bytes(), &vec![0u8; 16]);
+    println!("{}", String::from_utf8(decrypted).unwrap());
 }
+
 
 fn main() {
     if false {
