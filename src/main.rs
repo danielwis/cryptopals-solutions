@@ -179,6 +179,28 @@ fn run_set_two() {
     let decrypted_str = String::from_utf8(decrypted).unwrap();
     assert!(decrypted_str.contains("You're weakenin' fast, YO! and I can tell it"));
 
+    // Challenge 11
+    println!("Running challenge 11");
+    // The ECB detection relies on there being multiple identical blocks,
+    // i.e. multiple identical input blocks. Since the oracle pads with 5-10
+    // bytes on each side, we need to have at least two blocks worth of the
+    // same character, but also enough to fill potentially 15 extra bytes
+    // (since adding one char as padding will render that whole block
+    // "unusable" - we have no way of making the following block identical.
+    // This means that we need 15 bytes + 32 bytes minimum, which is 47.
+    let plaintext = b"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+    assert!(plaintext.len() == 47);
+    let encrypted_text = set2::challenge11::encrypt_ecb_or_cbc(plaintext);
+    println!(
+        "{} detected in challenge 11",
+        if set1::challenge8::is_ecb(&encrypted_text) {
+            "ECB"
+        } else {
+            "CBC"
+        }
+    );
+
+
     println!("All trials passed for set 2!");
 }
 

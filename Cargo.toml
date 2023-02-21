@@ -8,3 +8,4 @@ edition = "2021"
 [dependencies]
 openssl = "0.10"
 aes = "0.8.2"
+rand = "0.8.5"
