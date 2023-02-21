@@ -1,17 +1,38 @@
 use std::{fs::File, io::Read};
 
-use openssl::symm::{decrypt, Cipher};
+use aes::{
+    cipher::{generic_array::GenericArray, BlockDecrypt, KeyInit},
+    Aes128,
+};
 
-pub fn decrypt_with_known_key(input: &[u8], key: &[u8]) -> Vec<u8> {
-    dbg!(input);
+use crate::set2;
+
+pub fn decrypt_ecb_block(input: &mut [u8; 16], key: &[u8; 16]) {
+    let cipher = Aes128::new(&GenericArray::from(*key));
+
+    cipher.decrypt_block(input.into());
+}
+
+pub fn decrypt_ecb(input: &[u8], key: &[u8]) -> Vec<u8> {
     assert!(key.len() == 16);
-    assert!(input.len() % 16 == 0);
-    let cipher = Cipher::aes_128_ecb();
+    let mut output = Vec::new();
+    let key_strict: [u8; 16] = key.try_into().expect("Incorrect key size");
 
-    println!("Decrypting. Length: {}", input.len());
-    let res = decrypt(cipher, key, None, input).unwrap();
+    // Decrypt each block
+    for chunk in input.chunks_exact(16) {
+        // Convert to [u8; 16]
+        let mut arr = chunk
+            .try_into()
+            .expect("Internal error: Incorrect key size");
+        decrypt_ecb_block(&mut arr, &key_strict);
 
-    res
+        output.extend(arr);
+    }
+
+    // Handle padding
+    let padding_chars = set2::helpers::get_padding_chars(&output);
+
+    output[..output.len() - padding_chars as usize].to_vec()
 }
 
 pub fn read_input_from_file(filename: &str) -> Vec<u8> {
