@@ -192,7 +192,7 @@ fn run_set_two() {
     assert!(plaintext.len() == 47);
     let encrypted_text = set2::challenge11::encrypt_ecb_or_cbc(plaintext);
     println!(
-        "{} detected in challenge 11",
+        "Detected mode: {}",
         if set1::challenge8::is_ecb(&encrypted_text) {
             "ECB"
         } else {
@@ -206,6 +206,13 @@ fn run_set_two() {
     let expected_output = "Rollin' in my 5.0\nWith my rag-top down so my hair can blow\nThe girlies on standby waving just to say hi\nDid you stop? No, I just drove by\n";
     let output = String::from_utf8(unknown_decrypted).unwrap();
     assert_eq!(expected_output, output);
+
+
+    // Challenge 13
+    println!("Running challenge 13");
+    let encrypted_profile = set2::challenge13::make_admin_profile();
+    let prof = set2::challenge13::decrypt_and_parse_profile(&encrypted_profile);
+    assert!(prof.role == set2::challenge13::ProfileRole::Admin);
 
     println!("All trials passed for set 2!");
 }

@@ -10,13 +10,16 @@ pub fn get_padding_chars(padded_vec: &[u8]) -> u8 {
                 is_padding = false;
             }
         }
+
+        // We have padding
+        if is_padding {
+            return pad_char;
+        }
     }
 
-    if is_padding {
-        pad_char
-    } else {
-        0
-    }
+    // We either have too big a char for it to be padding,
+    // or it doesn't fit the specification for pkcs7.
+    0
 }
 
 pub fn generate_random_bytes(n: u32) -> Vec<u8> {
