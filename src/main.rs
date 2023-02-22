@@ -200,6 +200,12 @@ fn run_set_two() {
         }
     );
 
+    // Challenge 12
+    println!("Running challenge 12");
+    let unknown_decrypted = set2::challenge12::decrypt_the_unknown_string();
+    let expected_output = "Rollin' in my 5.0\nWith my rag-top down so my hair can blow\nThe girlies on standby waving just to say hi\nDid you stop? No, I just drove by\n";
+    let output = String::from_utf8(unknown_decrypted).unwrap();
+    assert_eq!(expected_output, output);
 
     println!("All trials passed for set 2!");
 }
