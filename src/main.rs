@@ -1,3 +1,5 @@
+use std::io::Write;
+
 mod set1;
 mod set2;
 
@@ -105,7 +107,7 @@ fn run_set_one() {
     let hexstrings = set1::helpers::read_input_file_as_bytes("inputs/s1c8.input");
     let mut ecb_strings_found = 0;
     for hexstr in hexstrings {
-        if set1::challenge8::is_ecb(&hexstr) {
+        if set1::challenge8::is_ecb(&hexstr) != None {
             //println!("Found it! At least one 16-byte block occurs twice in the following vector: {:?}", hexstr);
             ecb_strings_found += 1;
         }
@@ -193,7 +195,7 @@ fn run_set_two() {
     let encrypted_text = set2::challenge11::encrypt_ecb_or_cbc(plaintext);
     println!(
         "Detected mode: {}",
-        if set1::challenge8::is_ecb(&encrypted_text) {
+        if set1::challenge8::is_ecb(&encrypted_text) != None {
             "ECB"
         } else {
             "CBC"
@@ -207,12 +209,24 @@ fn run_set_two() {
     let output = String::from_utf8(unknown_decrypted).unwrap();
     assert_eq!(expected_output, output);
 
-
     // Challenge 13
     println!("Running challenge 13");
     let encrypted_profile = set2::challenge13::make_admin_profile();
     let prof = set2::challenge13::decrypt_and_parse_profile(&encrypted_profile);
     assert!(prof.role == set2::challenge13::ProfileRole::Admin);
+
+    // Challenge 14
+    println!("Running challenge 14");
+    for i in 1..16 {
+        print!("\rTesting with random padding of size: {}", i);
+        std::io::stdout().flush().expect("some error message");
+        let random_bytes = set2::helpers::generate_random_bytes(i);
+        let key = set2::helpers::generate_random_bytes(16);
+        let unknown_decrypted = set2::challenge14::decrypt_the_unknown_string_with_random_padding(&key, &random_bytes);
+        let expected_output = "Rollin' in my 5.0\nWith my rag-top down so my hair can blow\nThe girlies on standby waving just to say hi\nDid you stop? No, I just drove by\n";
+        let output = String::from_utf8(unknown_decrypted).unwrap(); assert_eq!(expected_output, output);
+    }
+    println!();
 
     println!("All trials passed for set 2!");
 }

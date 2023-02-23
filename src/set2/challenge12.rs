@@ -27,8 +27,6 @@ pub fn encrypt_ecb_and_append_unknown_string(input: &[u8]) -> Vec<u8> {
 }
 
 pub fn decrypt_the_unknown_string() -> Vec<u8> {
-    let input = vec![0x61; 48];
-
     // Get the block size of the oracle function's cipher,
     // as well as the size of the secret text
     let mut i = 0;
@@ -49,9 +47,9 @@ pub fn decrypt_the_unknown_string() -> Vec<u8> {
 
     // Check that the encrypted string is properly detected as ECB.
     // This means that the oracle function is using ECB.
-    assert!(set1::challenge8::is_ecb(
-        &encrypt_ecb_and_append_unknown_string(&input)
-    ));
+    assert!(
+        set1::challenge8::is_ecb(&encrypt_ecb_and_append_unknown_string(&vec![0x61; 48])) != None
+    );
 
     // We want to extract one byte of the secret text at a time, and we
     // aim to do this by making the oracle "pad" some input with exactly
@@ -92,7 +90,7 @@ pub fn decrypt_the_unknown_string() -> Vec<u8> {
         n_bytes_short_filled.extend(&secret_text);
 
         // Manually go through every possible last-byte value and save
-        // the outputs. Then check which of these mathes the value for
+        // the outputs. Then check which of these matches the value for
         // the one_byte_short input. The match will give us the first
         // byte of unknown_string_as_bytes.
         let mut output_values_for_bytes = HashMap::<u8, Vec<u8>>::new();
