@@ -32,7 +32,7 @@ pub fn decrypt_ecb(input: &[u8], key: &[u8]) -> Vec<u8> {
     // Handle padding
     let padding_chars = set2::helpers::get_padding_chars(&output);
 
-    output[..output.len() - padding_chars as usize].to_vec()
+    output[..output.len() - padding_chars.unwrap() as usize].to_vec()
 }
 
 pub fn read_input_from_file(filename: &str) -> Vec<u8> {

@@ -78,7 +78,7 @@ pub fn decrypt_cbc(input: &[u8], key: &[u8], iv: &[u8]) -> Vec<u8> {
     }
 
     // Handle padding
-    let padding_chars = set2::helpers::get_padding_chars(&output);
+    let padding_chars = set2::helpers::get_padding_chars(&output).unwrap();
 
     output[..output.len() - padding_chars as usize].to_vec()
 }
